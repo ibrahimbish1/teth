@@ -6,7 +6,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# The Heroku app's endpoint URL to get/send data (update with your actual Heroku URL)
+# The Heroku app's endpoint URL to get/send data (update with your actual ccccHeroku URL)
 heroku_url = "https://teth-0d7f31287be9.herokuapp.com//data"
 get_data_url = "https://teth-0d7f31287be9.herokuapp.com//get-data"
 
