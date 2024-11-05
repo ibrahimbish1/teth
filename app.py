@@ -5,12 +5,12 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Database connection (use PostgreSQL on Heroku)
-DATABASE_URL = os.environ.get('DATABASE_URL')  # Heroku sets this automatically
+# PostgreSQL connection (Heroku automatically sets DATABASE_URL in environment variables)
+DATABASE_URL = os.environ['DATABASE_URL']  # Heroku will set this automatically
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cursor = conn.cursor()
 
-# Create the table if it doesn't exist
+# Create the table if it doesn't already exist
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS sensor_data (
         sensor_id TEXT,
@@ -25,7 +25,7 @@ conn.commit()
 def index():
     # Fetch all sensor data from the database to display on the webpage
     cursor.execute("SELECT * FROM sensor_data ORDER BY timestamp DESC;")
-    data = cursor.fetchall()  # List of tuples
+    data = cursor.fetchall()  # List of tuples (sensor_id, temperature, humidity, timestamp)
     return render_template("index.html", data=data)
 
 @app.route('/receive_data', methods=['POST'])
