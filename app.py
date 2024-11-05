@@ -1,48 +1,48 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for
-from firebase_admin import credentials, initialize_app, db
+from flask import Flask, render_template, jsonify, request
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Firebase Setup
-cred = credentials.Certificate(r"C:\Users\user\Desktop\app test4\tethproweb-firebase-adminsdk-a2a9n-1a3a5f1337.json")
-initialize_app(cred, {
-    'databaseURL': 'https://tethproweb-default-rtdb.europe-west1.firebasedatabase.app/'
-})
+# In-memory storage (just for example, replace with file/database if needed)
+data_store = []
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/names')
-def get_names():
-    # You can change this to fetch names from Firebase if needed
-    names = [
-        "Name 1", "Name 2", "Name 3", "Name 4", "Name 5",
-        "Name 6", "Name 7", "Name 8", "Name 9", "Name 10",
-        "Name 11", "Name 12", "Name 13", "Name 14", "Name 15", "Name 16"
-    ]
-    return jsonify(names)
+@app.route('/send_data', methods=['POST'])
+def send_data():
+    """
+    Receives data from Raspberry Pi and stores it in-memory or logs it.
+    """
+    try:
+        data = request.get_json()
+        name = data.get('name')
+        value = data.get('value')
+        
+        if not name or not value:
+            return jsonify({"error": "Missing 'name' or 'value'"}), 400
 
-@app.route('/records/<name>')
-def get_records(name):
-    records_ref = db.reference(f"/logs/{name}")
-    records = records_ref.get()
-    if records:
-        sorted_records = sorted(records.values(), key=lambda x: x.get('date', ''))
-        records_by_date = {}
-        for record in sorted_records:
-            date = record.get('date', 'N/A')
-            if date not in records_by_date:
-                records_by_date[date] = []
-            records_by_date[date].append(record)
-        return jsonify(records_by_date)
-    else:
-        return jsonify({"message": "No records found."})
+        # Store data in memory (you can replace this with a file or database if necessary)
+        timestamp = datetime.utcnow().isoformat()
+        record = {
+            "name": name,
+            "value": value,
+            "timestamp": timestamp
+        }
+        data_store.append(record)  # Store in memory for now
 
-@app.route('/record_page/<name>')
-def record_page(name):
-    return render_template('record_page.html', name=name)
+        return jsonify({"message": "Data received and stored successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_data')
+def get_data():
+    """
+    Returns the stored data (for example, to view it from a web interface).
+    """
+    return jsonify(data_store)
 
 if __name__ == '__main__':
     app.run(debug=True)
