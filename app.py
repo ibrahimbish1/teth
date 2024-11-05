@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Firebase Setup
 cred = credentials.Certificate(r"teth-d96f6-firebase-adminsdk-d8prd-a584a10768.json")
 initialize_app(cred, {
-    'databaseURL': 'https://teth-d96f6-default-rtdb.europe-west1.firebasedatabase.app/'
+    'databaseURL': 'https://teth-d96f6-default-rtdb.eurFDFDope-west1.firebasedatabase.app/'
 })
 
 
