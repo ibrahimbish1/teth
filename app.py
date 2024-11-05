@@ -5,10 +5,11 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Firebase Setup
-cred = credentials.Certificate(r"C:\Users\user\Desktop\app test4\teth-cbf7b-firebase-adminsdk-6f249-1d34ae36f5.json")
+cred = credentials.Certificate(r"C:\Users\user\Desktop\app test4\teth-d96f6-firebase-adminsdk-d8prd-a584a10768.json")
 initialize_app(cred, {
-    'databaseURL': 'https://teth-cbf7b-default-rtdb.asia-southeast1.firebasedatabase.app/'
+    'databaseURL': 'https://teth-d96f6-default-rtdb.europe-west1.firebasedatabase.app/'
 })
+
 
 @app.route('/')
 def index():
