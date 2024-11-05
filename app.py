@@ -1,51 +1,56 @@
 import os
 import json
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-from firebase_admin import credentials, initialize_app, db
+import requests  # to send data to/from external sources
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Firebase Setup: Load credentials from environment variable
-cred_json = os.getenv('FIREBASE_CREDENTIALS')  # Fetch credentials from Heroku config vars
-cred_dict = json.loads(cred_json)  # Convert JSON string back into a dictionary
-cred = credentials.Certificate(cred_dict)  # Initialize Firebase credentials
+# The Heroku app's endpoint URL to get/send data (update with your actual Heroku URL)
+heroku_url = "https://your-heroku-app-name.herokuapp.com/data"
+get_data_url = "https://your-heroku-app-name.herokuapp.com/get-data"
 
-# Initialize the Firebase app with the database URL
-initialize_app(cred, {
-    'databaseURL': 'https://tethproweb-default-rtdb.europe-west1.firebasedatabase.app/'
-})
-
+# Route to render index page
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# Route to get names (simulating the retrieval of some data, you could modify as needed)
 @app.route('/names')
 def get_names():
-    # You can change this to fetch names from Firebase if needed
-    names = [
-        "Name 1", "Name 2", "Name 3", "Name 4", "Name 5",
-        "Name 6", "Name 7", "Name 8", "Name 9", "Name 10",
-        "Name 11", "Name 12", "Name 13", "Name 14", "Name 15", "Name 16"
-    ]
+    # Sample names list for demonstration, can be replaced with any data
+    names = ["John", "Jane", "Alice", "Bob", "Charlie", "Eve"]
     return jsonify(names)
 
+# Route to retrieve records (replace with external API fetch)
 @app.route('/records/<name>')
 def get_records(name):
-    records_ref = db.reference(f"/logs/{name}")
-    records = records_ref.get()
-    if records:
-        sorted_records = sorted(records.values(), key=lambda x: x.get('date', ''))
-        records_by_date = {}
-        for record in sorted_records:
-            date = record.get('date', 'N/A')
-            if date not in records_by_date:
-                records_by_date[date] = []
-            records_by_date[date].append(record)
-        return jsonify(records_by_date)
+    # Example: Fetch records from an external source
+    response = requests.get(f"{get_data_url}")  # Get data from Heroku app
+    if response.status_code == 200:
+        data = response.json()
+        # In real case, you can filter records based on the 'name' or other criteria
+        records = data.get("message", "No data available.")
+        return jsonify(records)
     else:
-        return jsonify({"message": "No records found."})
+        return jsonify({"message": "Failed to fetch data from the server."})
 
+# Route to handle POST requests to send data to the Heroku API
+@app.route('/send_data', methods=['POST'])
+def send_data():
+    # Get the data sent from the request (this could come from a form or external source like Raspberry Pi)
+    data = request.json  # The JSON payload sent from Raspberry Pi
+    headers = {'Content-Type': 'application/json'}
+
+    # Send the data to the Heroku API (POST request)
+    response = requests.post(heroku_url, json=data, headers=headers)
+
+    if response.status_code == 200:
+        return jsonify({"message": "Data sent successfully!"}), 200
+    else:
+        return jsonify({"message": "Failed to send data."}), 400
+
+# Page for records specific to a name
 @app.route('/record_page/<name>')
 def record_page(name):
     return render_template('record_page.html', name=name)
