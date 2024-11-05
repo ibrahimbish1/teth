@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teth Children Records</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f8ff; /* Light blue background */
+            color: #333; /* Darker text for contrast */
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50; /* Darker blue for headings */
+        }
+        .name-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #3498db; /* Blue button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 18px;
+        }
+        .name-button:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+        }
+        #records {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Teth Children Records</h1>
+<div id="names-list"></div>
+
+<script>
+    // Fetch all names when the page loads
+    window.onload = fetchNames;
+
+    async function fetchNames() {
+        const response = await fetch('/names');
+        const names = await response.json();
+        displayNames(names);
+    }
+
+    function displayNames(names) {
+        const namesList = document.getElementById('names-list');
+        namesList.innerHTML = '';
+        names.forEach(name => {
+            const btn = document.createElement('button');
+            btn.innerText = name;
+            btn.className = 'name-button';
+            btn.onclick = () => window.location.href = `/record_page/${name}`; // Navigate to the record page
+            namesList.appendChild(btn);
+        });
+    }
+</script>
+
+</body>
+</html>
