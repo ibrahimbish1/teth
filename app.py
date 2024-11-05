@@ -1,15 +1,20 @@
+import os
+import json
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 from firebase_admin import credentials, initialize_app, db
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Firebase Setup
-cred = credentials.Certificate("tethproweb-firebase-adminsdk-a2a9n-8dfdc6bb1b.json")
+# Firebase Setup: Load credentials from environment variable
+cred_json = os.getenv('FIREBASE_CREDENTIALS')  # Fetch credentials from Heroku config vars
+cred_dict = json.loads(cred_json)  # Convert JSON string back into a dictionary
+cred = credentials.Certificate(cred_dict)  # Initialize Firebase credentials
+
+# Initialize the Firebase app with the database URL
 initialize_app(cred, {
     'databaseURL': 'https://tethproweb-default-rtdb.europe-west1.firebasedatabase.app/'
 })
-
 
 @app.route('/')
 def index():
