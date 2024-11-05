@@ -3,46 +3,53 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# In-memory storage (just for example, replace with file/database if needed)
-data_store = []
+# In-memory data store for demo purposes (you can replace it with a database)
+names = ["Name 1", "Name 2", "Name 3", "Name 4", "Name 5", "Name 6"]
+records = {
+    "Name 1": [
+        {"time": "10:00", "id": "A123", "date": "2024-11-05"},
+        {"time": "12:00", "id": "A124", "date": "2024-11-05"}
+    ],
+    "Name 2": [
+        {"time": "09:00", "id": "B123", "date": "2024-11-05"}
+    ],
+    # Add more names and records as needed
+}
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/send_data', methods=['POST'])
-def send_data():
+@app.route('/names')
+def get_names():
     """
-    Receives data from Raspberry Pi and stores it in-memory or logs it.
+    Returns a list of names (for the home page).
     """
-    try:
-        data = request.get_json()
-        name = data.get('name')
-        value = data.get('value')
-        
-        if not name or not value:
-            return jsonify({"error": "Missing 'name' or 'value'"}), 400
+    return jsonify(names)
 
-        # Store data in memory (you can replace this with a file or database if necessary)
-        timestamp = datetime.utcnow().isoformat()
-        record = {
-            "name": name,
-            "value": value,
-            "timestamp": timestamp
-        }
-        data_store.append(record)  # Store in memory for now
-
-        return jsonify({"message": "Data received and stored successfully"}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/get_data')
-def get_data():
+@app.route('/records/<name>')
+def get_records(name):
     """
-    Returns the stored data (for example, to view it from a web interface).
+    Returns the records for a specific name.
     """
-    return jsonify(data_store)
+    if name in records:
+        sorted_records = sorted(records[name], key=lambda x: x['date'])
+        records_by_date = {}
+        for record in sorted_records:
+            date = record['date']
+            if date not in records_by_date:
+                records_by_date[date] = []
+            records_by_date[date].append(record)
+        return jsonify(records_by_date)
+    else:
+        return jsonify({"message": "No records found for this name."})
+
+@app.route('/record_page/<name>')
+def record_page(name):
+    """
+    Renders the record page for a specific name.
+    """
+    return render_template('record_page.html', name=name)
 
 if __name__ == '__main__':
     app.run(debug=True)
