@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teth Children Records</title>
+    <title>Records for {{ name }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,57 +11,70 @@
             background-color: #f0f8ff; /* Light blue background */
             color: #333; /* Darker text for contrast */
         }
-        h1 {
-            text-align: center;
+        h1, h2 {
             color: #2c3e50; /* Darker blue for headings */
         }
-        .name-button {
-            display: block;
-            width: 100%;
+        .record {
+            margin: 10px 0;
+            background-color: #ecf0f1; /* Light gray for records */
             padding: 10px;
-            margin: 5px 0;
-            background-color: #3498db; /* Blue button */
+            border-radius: 5px;
+        }
+        .back-button {
+            padding: 10px;
+            background-color: #e74c3c; /* Red button */
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
             text-align: center;
-            font-size: 18px;
-        }
-        .name-button:hover {
-            background-color: #2980b9; /* Darker blue on hover */
-        }
-        #records {
+            display: block;
             margin-top: 20px;
+            width: 100px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #c0392b; /* Darker red on hover */
         }
     </style>
 </head>
 <body>
 
-<h1>Teth Children Records</h1>
-<div id="names-list"></div>
+<h1>Records for {{ name }}</h1>
+<div id="records"></div>
+
+<a class="back-button" href="/">Back to Home</a>
 
 <script>
-    // Fetch all names when the page loads
-    window.onload = fetchNames;
-
-    async function fetchNames() {
-        const response = await fetch('/names');
-        const names = await response.json();
-        displayNames(names);
+    async function fetchRecords() {
+        const name = "{{ name }}"; // The name is passed from Flask
+        const response = await fetch(`/records/${name}`);
+        const records = await response.json();
+        displayRecords(name, records);
     }
 
-    function displayNames(names) {
-        const namesList = document.getElementById('names-list');
-        namesList.innerHTML = '';
-        names.forEach(name => {
-            const btn = document.createElement('button');
-            btn.innerText = name;
-            btn.className = 'name-button';
-            btn.onclick = () => window.location.href = `/record_page/${name}`; // Navigate to the record page
-            namesList.appendChild(btn);
-        });
+    function displayRecords(name, records) {
+        const recordsDiv = document.getElementById('records');
+
+        if (records.message) {
+            recordsDiv.innerHTML = `<p>${records.message}</p>`;
+            return;
+        }
+
+        for (const [date, recordList] of Object.entries(records)) {
+            const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+            recordsDiv.innerHTML += `<h2>${dayName} (${date})</h2>`;
+            recordList.forEach(record => {
+                const time = record.time || 'N/A';
+                const personId = record.id || 'N/A';
+                recordsDiv.innerHTML += `<div class="record">Time: ${time}, ID: ${personId}</div>`;
+            });
+        }
     }
+
+    // Fetch records when the page loads
+    window.onload = fetchRecords;
 </script>
 
 </body>
