@@ -7,8 +7,8 @@ from datetime import datetime
 app = Flask(__name__)
 
 # The Heroku app's endpoint URL to get/send data (update with your actual Heroku URL)
-heroku_url = "https://your-heroku-app-name.herokuapp.com/data"
-get_data_url = "https://your-heroku-app-name.herokuapp.com/get-data"
+heroku_url = "https://teth-0d7f31287be9.herokuapp.com//data"
+get_data_url = "https://teth-0d7f31287be9.herokuapp.com//get-data"
 
 # Route to render index page
 @app.route('/')
