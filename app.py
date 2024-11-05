@@ -2,32 +2,32 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# Simulating an in-memory data storage (you can replace this with a database like SQLite or PostgreSQL)
+# In-memory storage for received data (replace with a database like PostgreSQL or SQLite for persistence)
 data_store = []
 
 @app.route('/')
 def index():
-    return "Welcome to the Sensor Data API!"
+    return "Welcome to the Data Receiver!"
 
-@app.route('/send_data', methods=['POST'])
+@app.route('/receive_data', methods=['POST'])
 def receive_data():
     # Get JSON data from the request
     data = request.json
 
-    # Check if data is provided
+    # If no data is provided, return an error message
     if not data:
         return jsonify({"message": "No data provided or malformed JSON!"}), 400
 
-    # Store the received data (in-memory storage, replace with a database if needed)
+    # Append the data to our in-memory store (replace with a real database if needed)
     data_store.append(data)
 
-    print(f"Received data: {data}")  # For debugging, print the received data
+    print(f"Received data: {data}")  # For debugging purposes
 
     return jsonify({"message": "Data received successfully!"}), 200
 
 @app.route('/get_data', methods=['GET'])
-def send_data():
-    # Return all stored data
+def get_data():
+    # Return all the stored data
     return jsonify({"data": data_store})
 
 if __name__ == '__main__':
