@@ -1,13 +1,32 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
+import os
+import psycopg2
+from datetime import datetime
 
 app = Flask(__name__)
 
-# In-memory storage for received data (replace with a database like PostgreSQL or SQLite for persistence)
-data_store = []
+# Database connection (use PostgreSQL on Heroku)
+DATABASE_URL = os.environ.get('DATABASE_URL')  # Heroku sets this automatically
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+cursor = conn.cursor()
+
+# Create the table if it doesn't exist
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS sensor_data (
+        sensor_id TEXT,
+        temperature REAL,
+        humidity REAL,
+        timestamp TEXT
+    );
+""")
+conn.commit()
 
 @app.route('/')
 def index():
-    return "Welcome to the Data Receiver!"
+    # Fetch all sensor data from the database to display on the webpage
+    cursor.execute("SELECT * FROM sensor_data ORDER BY timestamp DESC;")
+    data = cursor.fetchall()  # List of tuples
+    return render_template("index.html", data=data)
 
 @app.route('/receive_data', methods=['POST'])
 def receive_data():
@@ -18,17 +37,22 @@ def receive_data():
     if not data:
         return jsonify({"message": "No data provided or malformed JSON!"}), 400
 
-    # Append the data to our in-memory store (replace with a real database if needed)
-    data_store.append(data)
-
-    print(f"Received data: {data}")  # For debugging purposes
+    # Insert the received data into the PostgreSQL database
+    cursor.execute("""
+        INSERT INTO sensor_data (sensor_id, temperature, humidity, timestamp)
+        VALUES (%s, %s, %s, %s);
+    """, (data['sensor_id'], data['temperature'], data['humidity'], data['timestamp']))
+    conn.commit()
 
     return jsonify({"message": "Data received successfully!"}), 200
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    # Return all the stored data
-    return jsonify({"data": data_store})
+    # Return all the stored data in JSON format (for testing or other uses)
+    cursor.execute("SELECT * FROM sensor_data ORDER BY timestamp DESC;")
+    data = cursor.fetchall()
+    result = [{"sensor_id": row[0], "temperature": row[1], "humidity": row[2], "timestamp": row[3]} for row in data]
+    return jsonify({"data": result})
 
 if __name__ == '__main__':
     app.run(debug=True)
