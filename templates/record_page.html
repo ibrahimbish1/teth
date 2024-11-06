@@ -47,19 +47,13 @@
 
 <script>
     async function fetchRecords() {
-        const name = "{{ name }}";  // Name is passed from Flask to the template
+        const name = "{{ name }}";
         const response = await fetch(`/records/${name}`);
-        
-        if (response.ok) {
-            const records = await response.json();
-            console.log(records);  // Debugging line: Log the fetched records
-            displayRecords(records);
-        } else {
-            console.log("Failed to fetch records");
-        }
+        const records = await response.json();
+        displayRecords(name, records);
     }
 
-    function displayRecords(records) {
+    function displayRecords(name, records) {
         const recordsDiv = document.getElementById('records');
 
         if (records.message) {
@@ -74,7 +68,6 @@
         });
     }
 
-    // Fetch records when the page loads
     window.onload = fetchRecords;
 </script>
 
