@@ -47,10 +47,16 @@
 
 <script>
     async function fetchRecords() {
-        const name = "{{ name }}"; // Use the name passed from Flask
+        const name = "{{ name }}";  // Name is passed from Flask to the template
         const response = await fetch(`/records/${name}`);
-        const records = await response.json();
-        displayRecords(records);
+        
+        if (response.ok) {
+            const records = await response.json();
+            console.log(records);  // Debugging line: Log the fetched records
+            displayRecords(records);
+        } else {
+            console.log("Failed to fetch records");
+        }
     }
 
     function displayRecords(records) {
