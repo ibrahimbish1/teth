@@ -3,7 +3,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# In-memory storage for records (you can replace this with a database later)
+# In-memory storage for records
 records = {
     "Name 1": [],
     "Name 2": [],
