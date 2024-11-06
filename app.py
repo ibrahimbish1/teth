@@ -1,55 +1,64 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, request, jsonify
 from datetime import datetime
 
 app = Flask(__name__)
 
-# In-memory data store for demo purposes (you can replace it with a database)
-names = ["Name 1", "Name 2", "Name 3", "Name 4", "Name 5", "Name 6"]
+# Example in-memory storage for records (you can use a database if needed)
 records = {
-    "Name 1": [
-        {"time": "10:00", "id": "A123", "date": "2024-11-05"},
-        {"time": "12:00", "id": "A124", "date": "2024-11-05"}
-    ],
-    "Name 2": [
-        {"time": "09:00", "id": "B123", "date": "2024-11-05"}
-    ],
-    # Add more names and records as needed
+    "Name 1": [],
+    "Name 2": [],
+    "Name 3": []
 }
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return "Welcome to the Teth Children Records API!"
 
 @app.route('/names')
 def get_names():
-    """
-    Returns a list of names (for the home page).
-    """
+    # Return the names available
+    names = list(records.keys())
     return jsonify(names)
 
-@app.route('/records/<name>')
-def get_records(name):
-    """
-    Returns the records for a specific name.
-    """
-    if name in records:
-        sorted_records = sorted(records[name], key=lambda x: x['date'])
-        records_by_date = {}
-        for record in sorted_records:
-            date = record['date']
-            if date not in records_by_date:
-                records_by_date[date] = []
-            records_by_date[date].append(record)
-        return jsonify(records_by_date)
-    else:
-        return jsonify({"message": "No records found for this name."})
+@app.route('/add_record', methods=['POST'])
+def add_record():
+    try:
+        # Get the data sent from the Raspberry Pi (in JSON format)
+        data = request.json  # The data sent from the Raspberry Pi
+        
+        # Check if all required fields are present
+        if not data or 'name' not in data or 'time' not in data or 'id' not in data:
+            return jsonify({"message": "Missing required fields."}), 400  # Bad request
 
-@app.route('/record_page/<name>')
-def record_page(name):
-    """
-    Renders the record page for a specific name.
-    """
-    return render_template('record_page.html', name=name)
+        name = data.get('name')
+        time = data.get('time')
+        person_id = data.get('id')
+        date = datetime.now().strftime("%Y-%m-%d")  # Use the current date
+        
+        # Check if the name exists in records
+        if name in records:
+            records[name].append({
+                'time': time,
+                'id': person_id,
+                'date': date
+            })
+            return jsonify({"message": "Record added successfully!"}), 200
+        else:
+            return jsonify({"message": "Name not found!"}), 404
+
+    except Exception as e:
+        # If an error occurs, return a 500 error with the exception message
+        return jsonify({"message": "Server error", "error": str(e)}), 500
+
+
+@app.route('/records/<name>', methods=['GET'])
+def get_records(name):
+    # Get the records for a specific name
+    if name in records:
+        return jsonify(records[name])
+    else:
+        return jsonify({"message": "Name not found!"}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
