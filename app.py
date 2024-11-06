@@ -3,7 +3,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Example in-memory storage for records (you can use a database if needed)
+# In-memory storage for records (you can replace this with a database later)
 records = {
     "Name 1": [],
     "Name 2": [],
@@ -42,6 +42,7 @@ def add_record():
                 'id': person_id,
                 'date': date
             })
+            print(f"Updated records for {name}: {records[name]}")  # Debugging line
             return jsonify({"message": "Record added successfully!"}), 200
         else:
             return jsonify({"message": "Name not found!"}), 404
@@ -55,6 +56,7 @@ def add_record():
 def get_records(name):
     # Get the records for a specific name
     if name in records:
+        print(f"Returning records for {name}: {records[name]}")  # Debugging line
         return jsonify(records[name])
     else:
         return jsonify({"message": "Name not found!"}), 404
