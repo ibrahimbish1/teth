@@ -4,7 +4,7 @@ from firebase_admin import credentials, initialize_app, db
 app = Flask(__name__)
 
 # Firebase Setup
-cred = credentials.Certificate(r"C:\Users\user\Desktop\app test4\tethproweb-firebase-adminsdk-a2a9n-1a3a5f1337.json")
+cred = credentials.Certificate("tethproweb-firebase-adminsdk-a2a9n-1a3a5f1337.json")
 initialize_app(cred, {
     'databaseURL': 'https://tethproweb-default-rtdb.europe-west1.firebasedatabase.app/'
 })
