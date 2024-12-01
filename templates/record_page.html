@@ -5,49 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Records for {{ name }}</title>
     <style>
+        /* خلفية الصفحة */
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0ccaff;
             color: #333;
+            animation: fadeIn 1s ease-in;
         }
-        h1, h2 {
+
+        /* صندوق يحتوي على المحتوى */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-top: 20px;
+            animation: slideIn 1s ease-out;
+        }
+
+        h1 {
             color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 15px;
         }
+
+        h2 {
+            color: #3498db;
+            font-size: 1.5em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
         .record {
             margin: 10px 0;
             background-color: #ecf0f1;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 1em;
+            text-align: left;
         }
+
         .back-button {
-            padding: 10px;
+            padding: 12px;
             background-color: #e74c3c;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            display: block;
+            font-size: 1em;
             margin-top: 20px;
-            width: 100px;
+            width: 120px;
+            transition: background-color 0.3s, transform 0.3s;
             text-decoration: none;
+            display: inline-block;
         }
+
         .back-button:hover {
             background-color: #c0392b;
+            transform: translateY(-3px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* تحسينات لأجهزة الجوال */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* تقليل الفراغ حول المحتوى */
+            }
+
+            .container {
+                padding: 15px;
+                width: 100%; /* استخدام العرض الكامل للجهاز */
+                margin-top: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em; /* تقليل حجم الخط للعناوين */
+            }
+
+            h2 {
+                font-size: 1.2em; /* تقليل حجم الخط للنصوص الثانوية */
+            }
+
+            .record {
+                font-size: 0.9em; /* تقليل حجم الخط للنص */
+                padding: 8px; /* تقليل الحشوة */
+            }
+
+            .back-button {
+                font-size: 0.9em; /* تقليل حجم الخط للأزرار */
+                padding: 10px; /* تقليل الحشوة */
+                width: 100px; /* تقليل العرض */
+            }
         }
     </style>
 </head>
 <body>
 
-<h1>Records for {{ name }}</h1>
-<div id="records"></div>
-
-<a class="back-button" href="/">Back to Home</a>
+<div class="container">
+    <h1>Records for {{ name }}</h1>
+    <div id="records"></div>
+    <a class="back-button" href="/index">Back to Home</a>
+</div>
 
 <script>
     async function fetchRecords() {
-        const name = "{{ name }}";
+        const name = "{{ name }}"; // Use the name passed from Flask
         const response = await fetch(`/records/${name}`);
         const records = await response.json();
         displayRecords(name, records);
@@ -61,13 +143,19 @@
             return;
         }
 
-        records.forEach(record => {
-            const time = record.time || 'N/A';
-            const personId = record.id || 'N/A';
-            recordsDiv.innerHTML += `<div class="record">Time: ${time}, ID: ${personId}</div>`;
-        });
+        for (const [date, recordList] of Object.entries(records)) {
+            const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+            recordsDiv.innerHTML += `<h2>${dayName} (${date})</h2>`;
+            recordList.forEach(record => {
+                const time = record.time || 'N/A';
+                const personId = record.id || 'N/A';
+                if (record.id==123){
+                recordsDiv.innerHTML += `<div class="record">Time: ${time}, ID: ${personId}</div>`;
+        }});
+        }
     }
 
+    // Fetch records when the page loads
     window.onload = fetchRecords;
 </script>
 
