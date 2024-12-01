@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teeth Check for {{ today_date }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0ccaff;
+            color: #333;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 700px;
+            width: 90%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .teeth-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tooth {
+            width: 100%;
+            height: 50px;
+            border-radius: 5px;
+            background-color: #ecf0f1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s, background-color 0.3s;
+            font-weight: bold;
+            font-size: 1em;
+            color: #2c3e50;
+        }
+
+        .tooth:hover {
+            transform: scale(1.05);
+        }
+
+        .white {
+            background-color: #ffffff;
+        }
+
+        .red {
+            background-color: #ff6b6b;
+        }
+
+        .loading {
+            font-size: 1.5em;
+            color: #3498db;
+        }
+
+        .back-button {
+            font-size: 1em; /* Slightly larger font for better visibility */
+            padding: 12px 20px; /* Increased padding for better clickability */
+            margin-top: 20px; /* Space between the button and teeth grid */
+            background-color: #3498db; /* Blue background */
+            color: white; /* White text */
+            border: none; /* Remove default border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s, transform 0.2s; /* Smooth transition on hover */
+        }
+
+        .back-button:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly enlarge the button on hover */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teeth Check for {{ today_date }}</h1>
+        <div id="loading" class="loading">Loading...</div>
+        <div class="teeth-container" id="teeth-container"></div>
+        <!-- Adjusted Home button design -->
+        <button onclick="location.href='/'" class="back-button">home</button>
+    </div>
+    <script src="/static/app.js" defer></script>
+</body>
+</html>
