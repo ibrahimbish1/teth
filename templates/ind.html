@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        /* تنسيقات أساسية */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #a7e1e5);
+            color: #333;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .container {
+            background-image: url('https://img.freepik.com/free-vector/floating-tooth-cartoon-vector-icon-illustration-object-healthcare-icon-concept-isolated-premium_138676-4709.jpg?w=740');
+            background-size: cover;
+            background-position: center;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: #ffffff;
+            animation: slideIn 1s ease-out;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-in;
+        }
+
+        .button {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* تحسينات لأجهزة الجوال */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* تقليل الفراغ حول المحتوى */
+            }
+
+            .container {
+                padding: 20px;
+                width: 100%; /* استخدام العرض الكامل للجهاز */
+                margin-top: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em; /* تقليل حجم الخط للعناوين */
+            }
+
+            .button {
+                font-size: 0.9em; /* تقليل حجم الخط للأزرار */
+                padding: 10px; /* تقليل الحشوة داخل الأزرار */
+                margin: 6px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome to the App</h1>
+    <button class="button" onclick="navigateTo('home')">Home</button>
+    <button class="button" onclick="navigateTo('live')">Live</button>
+</div>
+
+<script>
+    function navigateTo(page) {
+        if (page === 'home') {
+            window.location.href = '/index';
+        } else if (page === 'live') {
+            window.location.href = '/live';
+        }
+    }
+</script>
+
+</body>
+</html>
