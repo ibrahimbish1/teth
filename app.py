@@ -7,7 +7,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Firebase Setup
-cred = credentials.Certificate(r"C:\Users\user\Desktop\app test4\tethproweb-firebase-adminsdk-fucg8-78044d6927.json")
+cred = credentials.Certificate(r"tethproweb-firebase-adminsdk-a2a9n-1a3a5f1337.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://tethproweb-default-rtdb.europe-west1.firebasedatabase.app/'
 })
