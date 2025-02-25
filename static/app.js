@@ -23,10 +23,17 @@ function updateTeeth(data) {
         const tooth = document.createElement('div');
         tooth.className = 'tooth';
         tooth.textContent = `Tooth ${i}`; // Display tooth number
+
         const item = data.find(d => d.id === i);
         if (item) {
-            tooth.classList.add(item.color); // Add color (red/white)
+            // If the color is blue, make it blink between red and blue
+            if (item.color === 'red') {
+                tooth.classList.add('blinking'); // Add blinking effect class
+            } else {
+                tooth.classList.add(item.color); // Apply the regular color (red or other)
+            }
         }
+
         container.appendChild(tooth);
     }
 }
